@@ -36,6 +36,17 @@ async function run() {
       res.send(result);
     });
 
+    app.get("/habits/user/:email", async (req, res) => {
+      const email = req.params.email;
+
+      const result = await habitsCollection
+       .find({ userEmail: email })
+       .sort({ createdAt: -1 })
+       .toArray();
+
+     res.send(result);
+    });
+
   } finally {}
 }
 run().catch(console.dir);
