@@ -40,14 +40,61 @@ async function run() {
       const email = req.params.email;
 
       const result = await habitsCollection
-       .find({ userEmail: email })
-       .sort({ createdAt: -1 })
-       .toArray();
+        .find({ userEmail: email })
+        .sort({ createdAt: -1 })
+        .toArray();
 
-     res.send(result);
+      res.send(result);
     });
 
-  } finally {}
+    app.post("/habits", async (req, res) => {
+      const habit = req.body;
+      const result = await habitsCollection.insertOne(habit);
+      res.send(result);
+    });
+
+    app.delete("/habits/:id", async (req, res) => {
+      const id = req.params.id;
+
+      const result = await habitsCollection.deleteOne({
+        _id: new ObjectId(id),
+      });
+
+      res.send(result);
+    });
+
+
+    app.patch("/habits/:id", async (req, res) => {
+      const id = req.params.id;
+      const updatedHabit = req.body;
+
+      const result = await habitsCollection.updateOne(
+        { _id: new ObjectId(id) },
+        {
+          $set: {
+            title: updatedHabit.title,
+            category: updatedHabit.category,
+            visibility: updatedHabit.visibility,
+          },
+        }
+      );
+
+      res.send(result);
+    });
+
+    app.get("/habits/:id", async (req, res) => {
+      const id = req.params.id;
+
+      const habit = await habitsCollection.findOne({
+        _id: new ObjectId(id),
+      });
+
+      res.send(habit);
+    });
+
+
+
+  } finally { }
 }
 run().catch(console.dir);
 
