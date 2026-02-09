@@ -47,6 +47,12 @@ async function run() {
       res.send(result);
     });
 
+    app.get("/habits/public", async (req, res) => {
+      const result = await habitsCollection.find({ isPublic: true }).toArray();
+      res.send(result);
+    });
+
+
     app.post("/habits", async (req, res) => {
       const habit = req.body;
       const result = await habitsCollection.insertOne(habit);
@@ -92,33 +98,33 @@ async function run() {
       res.send(habit);
     });
 
-app.patch("/habits/complete/:id", async (req, res) => {
-  const id = req.params.id;
-  const today = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
+    app.patch("/habits/complete/:id", async (req, res) => {
+      const id = req.params.id;
+      const today = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
 
-  const habit = await habitsCollection.findOne({
-    _id: new ObjectId(id),
-  });
+      const habit = await habitsCollection.findOne({
+        _id: new ObjectId(id),
+      });
 
-  if (!habit) {
-    return res.status(404).send({ message: "Habit not found" });
-  }
+      if (!habit) {
+        return res.status(404).send({ message: "Habit not found" });
+      }
 
-  const alreadyCompleted = habit.completionHistory?.includes(today);
+      const alreadyCompleted = habit.completionHistory?.includes(today);
 
-  if (alreadyCompleted) {
-    return res.send({ message: "Already completed today" });
-  }
+      if (alreadyCompleted) {
+        return res.send({ message: "Already completed today" });
+      }
 
-  const result = await habitsCollection.updateOne(
-    { _id: new ObjectId(id) },
-    {
-      $push: { completionHistory: today },
-    }
-  );
+      const result = await habitsCollection.updateOne(
+        { _id: new ObjectId(id) },
+        {
+          $push: { completionHistory: today },
+        }
+      );
 
-  res.send(result);
-});
+      res.send(result);
+    });
 
 
   } finally { }
