@@ -92,6 +92,33 @@ async function run() {
       res.send(habit);
     });
 
+app.patch("/habits/complete/:id", async (req, res) => {
+  const id = req.params.id;
+  const today = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
+
+  const habit = await habitsCollection.findOne({
+    _id: new ObjectId(id),
+  });
+
+  if (!habit) {
+    return res.status(404).send({ message: "Habit not found" });
+  }
+
+  const alreadyCompleted = habit.completionHistory?.includes(today);
+
+  if (alreadyCompleted) {
+    return res.send({ message: "Already completed today" });
+  }
+
+  const result = await habitsCollection.updateOne(
+    { _id: new ObjectId(id) },
+    {
+      $push: { completionHistory: today },
+    }
+  );
+
+  res.send(result);
+});
 
 
   } finally { }
