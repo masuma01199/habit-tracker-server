@@ -40,7 +40,7 @@ async function run() {
       const email = req.params.email;
 
       const result = await habitsCollection
-        .find({ userEmail: email })
+        .find({ email: email })
         .sort({ createdAt: -1 })
         .toArray();
 
