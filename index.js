@@ -6,7 +6,9 @@ const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const app = express();
 
 app.use(cors({
-  origin: ["https://habit-client-cyan.vercel.app", "https://habit-tracker-server-wqo2.onrender.com"],
+  origin: ["http://localhost:5173",
+    "http://localhost:5174",
+    "https://habit-client-cyan.vercel.app"],
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
   credentials: true
 }));
